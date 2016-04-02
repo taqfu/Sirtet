@@ -1,0 +1,56 @@
+<html>
+<head>	
+	<script src="https://code.jquery.com/jquery-1.12.2.min.js"></script>
+	<script src="Game.js"></script>
+	<script src="Blocks.js"></script>
+	<style>
+		.cell{
+			float:left;
+			width:5px;
+			height:5px;
+			text-align:center;
+		}
+		.row {
+			clear:both;
+		}
+		.neutral{
+			background-color:black;
+		}
+		.red{
+			background-color:red;
+		}
+	</style>
+</head>
+<body>
+	<div id="gameScreen">
+		
+	</div>
+</body>
+</html>
+
+<script>
+	var game = new Game(40, 80);
+	setInterval(function(event){
+		
+		game.run();
+	}, 50);
+	$(document).on("keydown", "body", function (event) {
+		console.log(game.left, game.right);
+		if (event.keyCode===37 ){
+			game.left=true;
+		} else if (event.keyCode===39){
+			game.right=true;
+		} 
+	});
+	$(document).on("keyup", "body", function (event) {
+		console.log(game.left, game.right);
+		if (event.keyCode===37 ){
+			game.left=false;
+		} else if (event.keyCode===39){
+			game.right=false;
+		} else {
+		}
+	});
+
+
+</script>
