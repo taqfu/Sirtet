@@ -168,7 +168,7 @@ function run(){
 	} else if (this.left){
 		this.moveLeft();
 	}
-
+	
 	if (!this.fall(this.down)){
 		this.tetrimos();
 		this.blocks.check();
@@ -202,25 +202,69 @@ function show(){
 function tetrimos(){
 	num=0;
 	player = this.blocks.last();
-	blockColor=this.blocks.color[player];
+	var blockColor=this.blocks.color[player];
 	blockX=this.blocks.pos[player][0]["x"];
 	blockY=this.blocks.pos[player][0]["y"];
-	//this.tilesConnected(this.blocks.pos[player][0], blockColor);
-	var horizontal = this.checkLines("horizontal", this.blocks.pos[player][0], blockColor);
-	console.log(horizontal["tiles"]);
-	if (horizontal["distance"] === 2){
+	var horizontalLine = this.checkLines("horizontal", this.blocks.pos[player][0], blockColor);
+	var verticalLines = new Array();
+  for (horizontalTile in horizontalLine["tiles"]){
+    verticalLines.push(this.checkLines("vertical", horizontalLine["tiles"][horizontalTile], blockColor));
+  }
+  if (horizontalLine["distance"] === 1){
+    if (verticalLines[0]["distance"]===2 && verticalLines[0]["end"]==="up"){
+      bottomHorizontalLine = this.checkLines("horizontal", verticalLines[0]["tiles"][1], blockColor);
+      if (bottomHorizontalLine["distance"]===2){
+          verticalLine = this.checkLines("vertical", bottomHorizontalLine["tiles"][1], blockColor);
+      } else if (bottomHorizontalLine["center"] && bottomHorizontalLine["distance"]===3){
 
-		vertical1 = this.checkLines("vertical", this.blocks.pos[player][0], blockColor);
-		vertical2 = this.checkLines("vertical", horizontal["tiles"][0], blockColor);
-		console.log (vertical1, vertical2);
-		if (vertical1["distance"]===2 && vertical2["distance"]==2 && vertical1["end"] && vertical2["end"]){
+        console.log("middle triple tetrimo");
+      } else if (bottomHorizontalLine["end"] && bottomHorizontalLine["distance"]===3){
+        console.log("l tetrimo");
+      }
+		} else if (verticalLines[0]["distance"]===3  && verticalLines[0]["end"]==="up"){
+			bottomHorizontalLine = this.checkLines("horizontal", verticalLines[0]["tiles"][2], blockColor);
+			if (bottomHorizontalLine["distance"]>=2){
+				console.log("standing L");
+			}
+
+    } else if (verticalLines[0]["distance"]>=4){
+
+	  console.log("STANDING UP I");
+    }
+	} else if (horizontalLine["distance"] === 2){
+		if ((verticalLines[0]["distance"]===1 && verticalLines[1]["distance"]>2 && verticalLines[1]["end"])
+			|| (verticalLines[1]["distance"]===1 && verticalLines[0]["distance"]>2 && verticalLines[0]["end"])){
+			console.log("STANDING L");
+		} else if (verticalLines[0]["distance"]>1 && verticalLines[1]["distance"]>1){
 			console.log("SQUARE");
+		} else if ((verticalLines[0]["distance"]===1 && verticalLines[1]["distance"]===2)
+				|| (verticalLines[1]["distance"]===1 && verticalLines[0]["distance"]===2)){
+      console.log( horizontalLine["STANDING Z"]);
+      otherVerticalLine = this.checkLines("vertical", horizontalLine["tiles"][1], blockColor);
+      console.log("d:2 v:2 then other", otherVerticalLine["distance"]);
+	  	} else if ((verticalLines[0]["distance"]===1 && verticalLines[1]["distance"]>2 && verticalLines[1]["center"])
+			  || (verticalLines[1]["distance"]===1 && verticalLines[0]["distance"]>2 && verticalLines[0]["center"])){
+	  		console.log("MIDDLE TRIPLE TETRIMO");
 		}
-	} else if (horizontal["distance"] === 3){
 
-	} else if (horizontal["distance"] === 4){
+	} else if (horizontalLine["distance"] === 3){
+    for (horizontalTile in horizontalLine["tiles"]){
+      var horizontalPos = this.checkLines("horizontal", horizontalLine["tiles"][horizontalTile], blockColor);
+      var verticalLine = this.checkLines("vertical", horizontalLine["tiles"][horizontalTile], blockColor);
+      if (horizontalPos["center"]){
+
+        if (verticalLine["distance"]==2){
+          console.log("MIDDLE TRIPLE TETRIMO");
+        }
+      } else if (horizontalPos["end"]){
+        if (verticalLine["distance"]===2){
+          console.log("L TETRIMO");
+        }
+      }
+    }
+	} else if (horizontalLine["distance"] === 4){
 		console.log("LAID DOWN I");
-	} else if (horizontal["distance"] > 4){
+	} else if (horizontalLine["distance"] > 4){
 
 	}
 }
@@ -235,7 +279,7 @@ function checkLines(axis, location, color){
 		directionCaptions[1] = "down";
 	}
 	var directionNumbers = [2, 2];
-	var tiles = new Array();
+	var tiles = [location];
 
 	for (direction in directionNumbers){
 		while (this.checkPosition(location, directionCaptions[direction], directionNumbers[direction])===color){
@@ -251,6 +295,6 @@ function checkLines(axis, location, color){
 	} else 	if (directionNumbers[0]===0 && directionNumbers[1]!==0 ){
 			end = directionCaptions[0];
 	}
-	var center = (directionNumbers[0]===directionNumbers[1] && distance%2===1) ;
+	var center = (directionNumbers[0]===directionNumbers[1] ) ;
 	return {tiles:tiles, distance:distance, end:end, center:center};
 }

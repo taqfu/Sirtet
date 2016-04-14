@@ -1,33 +1,39 @@
-function Blocks (sizeOfX, sizeOfY){	
+function Blocks (sizeOfX, sizeOfY){
 	this.color = new Array();
 	this.move = moveBlock;
 	this.pos = new Array();
 	this.sizeOfX = sizeOfX;
 	this.sizeOfY = sizeOfY;
-	
+
 	this.check = checkIntegrity;
+	this.delete = deleteBlock;
 	this.last = lastBlock;
-	this.spawn = dropBlock;	
+	this.spawn = dropBlock;
+	this.which = whichBlock;
 }
 
-function checkIntegrity(){	
-	player=this.last();		
+function checkIntegrity(){
+	player=this.last();
 //	console.log(this.pos[player][0]["y"]%2);
 	if (this.pos[player][0]["y"]%2===0){
 		console.log("ADJ1");
-		this.move(player, "down", 1);			
-	} 
+		this.move(player, "down", 1);
+	}
 	if (player>0){
-		for (block=0;block<player;block++){		
-			
+		for (block=0;block<player;block++){
+
 			if (this.pos[block][1]["y"]-this.pos[player][0]["y"]===2){
 				console.log("ADJ2");
-				this.move(player, "down", 1);			
+				this.move(player, "down", 1);
 			}
 		}
 	}
 }
-function dropBlock(){	
+
+function deleteBlock(block){
+
+}
+function dropBlock(){
 	x= Math.floor(this.sizeOfX/2);
 	y= 0;
 	this.pos.push([{x:x, y:y}, {x:x, y:y-1}, {x:x+1, y:y}, {x:x+1, y:y-1}]);
@@ -50,8 +56,10 @@ function moveBlock(block, direction, rateOfChange){
 	}
 }
 
-function whichBlock(){
-
-	
+function whichBlock(location){
+	for(block in this.pos){
+		if (location === this.pos[block][0]){
+			return block;
+		}
+	}
 }
-
