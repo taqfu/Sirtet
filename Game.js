@@ -11,6 +11,7 @@ function Game (sizeOfX, sizeOfY){
 	this.checkPosition = checkPosition;
 
 	this.erasePlayer = erasePlayer;
+	this.eraseWorld = eraseWorld;
 	this.fall = fall;
 	this.loadBlocks = loadBlocks;
 	this.moveDirection = moveDirection;
@@ -74,7 +75,13 @@ function checkPosition(location, direction, units){
 //	console.log(location["x"], location["y"], direction, x,y);
 	return this.pos[x][y];
 }
-
+function eraseWorld(){
+	for (x=0;x<this.sizeOfX;x++){
+		for (y=0;y<this.sizeOfY;y++){
+			this.pos[x][y]=0;
+		}
+	}
+}
 function erasePlayer(){
 	player = this.blocks.last();
 	for (pixel=0;pixel<4;pixel++){
@@ -168,10 +175,14 @@ function run(){
 	} else if (this.left){
 		this.moveLeft();
 	}
-	
+
 	if (!this.fall(this.down)){
-		this.tetrimos();
 		this.blocks.check();
+		console.log("BEGIN", this.blocks.pos.length);
+		this.tetrimos();
+		this.eraseWorld();
+
+		console.log("END", this.blocks.pos.length);
 		this.blocks.spawn();
 	}
 
@@ -210,6 +221,7 @@ function tetrimos(){
   for (horizontalTile in horizontalLine["tiles"]){
     verticalLines.push(this.checkLines("vertical", horizontalLine["tiles"][horizontalTile], blockColor));
   }
+
   if (horizontalLine["distance"] === 1){
     if (verticalLines[0]["distance"]===2 && verticalLines[0]["end"]==="up"){
       bottomHorizontalLine = this.checkLines("horizontal", verticalLines[0]["tiles"][1], blockColor);
@@ -263,7 +275,14 @@ function tetrimos(){
       }
     }
 	} else if (horizontalLine["distance"] === 4){
+
+		for(tile=0;tile<horizontalLine["tiles"].length;tile++){
+			console.log(this.blocks.which(horizontalLine["tiles"][tile]));
+			this.blocks.delete(this.blocks.which(horizontalLine["tiles"][tile]));
+		}
+		//this.blocks.delete()
 		console.log("LAID DOWN I");
+		return true;
 	} else if (horizontalLine["distance"] > 4){
 
 	}

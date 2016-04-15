@@ -31,8 +31,11 @@ function checkIntegrity(){
 }
 
 function deleteBlock(block){
-
+	console.log("deleting", block);
+	this.pos.splice(block, 1);
+	this.color.splice(block, 1);
 }
+
 function dropBlock(){
 	x= Math.floor(this.sizeOfX/2);
 	y= 0;
@@ -57,9 +60,11 @@ function moveBlock(block, direction, rateOfChange){
 }
 
 function whichBlock(location){
+
 	for(block in this.pos){
-		if (location === this.pos[block][0]){
+		if (location["x"] === this.pos[block][0]["x"] && location["y"] === this.pos[block][0]["y"] ){
 			return block;
 		}
 	}
+	console.log(location);
 }
