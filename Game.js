@@ -1,3 +1,5 @@
+//unrelated blocks are being deleted.
+
 function Game (sizeOfX, sizeOfY){
 	this.down=false;
 	this.fallRate = 1;
@@ -178,11 +180,9 @@ function run(){
 
 	if (!this.fall(this.down)){
 		this.blocks.check();
-		console.log("BEGIN", this.blocks.pos.length);
 		this.tetrimos();
 		this.eraseWorld();
 
-		console.log("END", this.blocks.pos.length);
 		this.blocks.spawn();
 	}
 
@@ -202,6 +202,14 @@ function show(){
 				screen = screen + " red"
 			} else if (this.pos[x][y]==2){
 				screen = screen + " blue"
+			} else if (this.pos[x][y]==3){
+				screen = screen + " green"
+			} else if (this.pos[x][y]==4){
+				screen = screen + " yellow"
+			} else if (this.pos[x][y]==5){
+				screen = screen + " grey"
+			} else if (this.pos[x][y]==6){
+				screen = screen + " orange"
 			}
 			screen = screen + "'></div>";
 		}
@@ -223,72 +231,113 @@ function tetrimos(){
   }
 
   if (horizontalLine["distance"] === 1){
-    if (verticalLines[0]["distance"]===2 && verticalLines[0]["end"]==="up"){
-      bottomHorizontalLine = this.checkLines("horizontal", verticalLines[0]["tiles"][1], blockColor);
-      if (bottomHorizontalLine["distance"]===2){
-          verticalLine = this.checkLines("vertical", bottomHorizontalLine["tiles"][1], blockColor);
-      } else if (bottomHorizontalLine["center"] && bottomHorizontalLine["distance"]===3){
-
-        console.log("middle triple tetrimo");
-      } else if (bottomHorizontalLine["end"] && bottomHorizontalLine["distance"]===3){
-        console.log("l tetrimo");
-      }
-		} else if (verticalLines[0]["distance"]===3  && verticalLines[0]["end"]==="up"){
-			bottomHorizontalLine = this.checkLines("horizontal", verticalLines[0]["tiles"][2], blockColor);
-			if (bottomHorizontalLine["distance"]>=2){
-				console.log("standing L");
-			}
-
-    } else if (verticalLines[0]["distance"]>=4){
-
-	  console.log("STANDING UP I");
-    }
-	} else if (horizontalLine["distance"] === 2){
-		if ((verticalLines[0]["distance"]===1 && verticalLines[1]["distance"]>2 && verticalLines[1]["end"])
-			|| (verticalLines[1]["distance"]===1 && verticalLines[0]["distance"]>2 && verticalLines[0]["end"])){
-			console.log("STANDING L");
-		} else if (verticalLines[0]["distance"]>1 && verticalLines[1]["distance"]>1){
-			console.log("SQUARE");
-		} else if ((verticalLines[0]["distance"]===1 && verticalLines[1]["distance"]===2)
-				|| (verticalLines[1]["distance"]===1 && verticalLines[0]["distance"]===2)){
-      console.log( horizontalLine["STANDING Z"]);
-      otherVerticalLine = this.checkLines("vertical", horizontalLine["tiles"][1], blockColor);
-      console.log("d:2 v:2 then other", otherVerticalLine["distance"]);
-	  	} else if ((verticalLines[0]["distance"]===1 && verticalLines[1]["distance"]>2 && verticalLines[1]["center"])
-			  || (verticalLines[1]["distance"]===1 && verticalLines[0]["distance"]>2 && verticalLines[0]["center"])){
-	  		console.log("MIDDLE TRIPLE TETRIMO");
-		}
+	    if (verticalLines[0]["distance"]===2 && verticalLines[0]["end"]==="up"){
+  	      bottomHorizontalLine = this.checkLines("horizontal", verticalLines[0]["tiles"][1], blockColor);
+  	      if (bottomHorizontalLine["distance"]===2){
+              verticalLine = this.checkLines("vertical", bottomHorizontalLine["tiles"][1], blockColor);
+              //unfinished
+  	      } else if (bottomHorizontalLine["center"] && bottomHorizontalLine["distance"]===3){
+            this.blocks.delete(this.blocks.which(horizontalLine["tiles"][0]));
+            for(tile=0;tile<bottomHorizontalLine["tiles"].length;tile++){
+                this.blocks.delete(this.blocks.which(bottomHorizontalLine["tiles"][tile]));
+            }
+  	        console.log("middle triple tetrimo DELETED");
+  	      } else if (bottomHorizontalLine["end"] && bottomHorizontalLine["distance"]===3){
+            this.blocks.delete(this.blocks.which(horizontalLine["tiles"][0]));
+            for(tile=0;tile<bottomHorizontalLine["tiles"].length;tile++){
+                this.blocks.delete(this.blocks.which(bottomHorizontalLine["tiles"][tile]));
+            }
+  	        console.log("l tetrimo DELETED");
+  	      }
+		  } else if (verticalLines[0]["distance"]===3  && verticalLines[0]["end"]==="up"){
+    			bottomHorizontalLine = this.checkLines("horizontal", verticalLines[0]["tiles"][2], blockColor);
+    	    if (bottomHorizontalLine["distance"]==2){
+              for(tile=0;tile<verticalLines[0]["tiles"].length;tile++){
+                  this.blocks.delete(this.blocks.which(verticalLines[0]["tiles"][tile]));
+              }
+              for(tile=0;tile<bottomHorizontalLine["tiles"].length;tile++){
+                  this.blocks.delete(this.blocks.which(bottomHorizontalLine["tiles"][tile]));
+              }
+      				console.log("standing L");
+    			}
+	    } else if (verticalLines[0]["distance"]==4){
+          for(tile=0;tile<verticalLines[0]["tiles"].length;tile++){
+              this.blocks.delete(this.blocks.which(verticalLines[0]["tiles"][tile]));
+          }
+		  console.log("STANDING UP I DELETED");
+	    }
+    } else if (horizontalLine["distance"] === 2){
+        //There's an issue where one of the STANDING L's facing rigth when placed against the farthest left wall aren't registering.
+    		if (verticalLines[0]["distance"]===1 && verticalLines[1]["distance"]==3 && verticalLines[1]["end"]){
+            this.blocks.delete(this.blocks.which(verticalLines[0]["tiles"][0]));
+            for(tile=0;tile<verticalLines[1]["tiles"].length;tile++){
+                this.blocks.delete(this.blocks.which(verticalLines[1]["tiles"][tile]));
+            }
+            console.log("STANDING L 0 DELETED?");
+        } else if (verticalLines[1]["distance"]===1 && verticalLines[0]["distance"]==3 && verticalLines[0]["end"]){
+            this.blocks.delete(this.blocks.which(verticalLines[1]["tiles"][0]));
+            for(tile=0;tile<verticalLines[0]["tiles"].length;tile++){
+                this.blocks.delete(this.blocks.which(verticalLines[0]["tiles"][tile]));
+            }
+      			console.log("STANDING L 1 DELETED?");
+    		} else if (verticalLines[0]["distance"]==2 && verticalLines[1]["distance"]==2){
+    			for (lineNum=0;lineNum<2;lineNum++){
+    				for(tile=0;tile<verticalLines[lineNum]["tiles"].length;tile++){
+    					this.blocks.delete(this.blocks.which(verticalLines[lineNum]["tiles"][tile]));
+    				}
+    			}
+    			console.log("SQUARE DELETED");
+    		} else if ((verticalLines[0]["distance"]===1 && verticalLines[1]["distance"]===2)
+    				|| (verticalLines[1]["distance"]===1 && verticalLines[0]["distance"]===2)){
+          console.log( horizontalLine["STANDING Z"]);
+          otherVerticalLine = this.checkLines("vertical", horizontalLine["tiles"][1], blockColor);
+          console.log("d:2 v:2 then other", otherVerticalLine["distance"]);
+    	  } else if ((verticalLines[0]["distance"]===1 && verticalLines[1]["distance"]>2 && verticalLines[1]["center"])
+    			  || (verticalLines[1]["distance"]===1 && verticalLines[0]["distance"]>2 && verticalLines[0]["center"])){
+              //Don't think this actually works.
+    	  		console.log("MIDDLE TRIPLE TETRIMO");
+    		}
 
 	} else if (horizontalLine["distance"] === 3){
     for (horizontalTile in horizontalLine["tiles"]){
       var horizontalPos = this.checkLines("horizontal", horizontalLine["tiles"][horizontalTile], blockColor);
       var verticalLine = this.checkLines("vertical", horizontalLine["tiles"][horizontalTile], blockColor);
       if (horizontalPos["center"]){
-
         if (verticalLine["distance"]==2){
+          for(tile=0;tile<verticalLine["tiles"].length;tile++){
+            this.blocks.delete(this.blocks.which(verticalLine["tiles"][tile]));
+          }
+          for(tile=0;tile<horizontalLine["tiles"].length;tile++){
+            this.blocks.delete(this.blocks.which(horizontalLine["tiles"][tile]));
+          }
           console.log("MIDDLE TRIPLE TETRIMO");
         }
       } else if (horizontalPos["end"]){
+        //Not sure if this is possible.
         if (verticalLine["distance"]===2){
-          console.log("L TETRIMO");
+          for(tile=0;tile<verticalLine["tiles"].length;tile++){
+            this.blocks.delete(this.blocks.which(verticalLine["tiles"][tile]));
+          }
+          for(tile=0;tile<horizontalLine["tiles"].length;tile++){
+            this.blocks.delete(this.blocks.which(horizontalLine["tiles"][tile]));
+          }
+          console.log("L TETRIMO DELETED. (Not possible)");
         }
       }
     }
 	} else if (horizontalLine["distance"] === 4){
+  		for(tile=0;tile<horizontalLine["tiles"].length;tile++){
+  			this.blocks.delete(this.blocks.which(horizontalLine["tiles"][tile]));
+  		}
 
-		for(tile=0;tile<horizontalLine["tiles"].length;tile++){
-			console.log(this.blocks.which(horizontalLine["tiles"][tile]));
-			this.blocks.delete(this.blocks.which(horizontalLine["tiles"][tile]));
-		}
-		//this.blocks.delete()
-		console.log("LAID DOWN I");
-		return true;
+  		console.log("LAID DOWN I DELETED");
 	} else if (horizontalLine["distance"] > 4){
 
 	}
 }
 
 function checkLines(axis, location, color){
+
 	var directionCaptions = new Array();
 	if (axis === "horizontal"){
 		directionCaptions[0] = "left";

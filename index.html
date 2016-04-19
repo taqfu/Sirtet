@@ -1,5 +1,5 @@
 <html>
-<head>	
+<head>
 	<script src="https://code.jquery.com/jquery-1.12.2.min.js"></script>
 	<script src="Game.js"></script>
 	<script src="Blocks.js"></script>
@@ -22,18 +22,32 @@
 		.red{
 			background-color:red;
 		}
+    .green{
+      background-color:green;
+    }
+
+    .yellow{
+        background-color:yellow;
+    }
+    .grey{
+      background-color:grey;
+    }
+    .orange{
+      background-color:orange;
+    }
+
 	</style>
 </head>
 <body>
 	<div id="gameScreen">
-		
+
 	</div>
 </body>
 </html>
 
 <script>
 	var game = new Game(40, 80);
-	setInterval(function(event){		
+	setInterval(function(event){
 		game.run();
 	}, 50);
 	$(document).on("keydown", "body", function (event) {

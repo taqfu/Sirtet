@@ -40,7 +40,7 @@ function dropBlock(){
 	x= Math.floor(this.sizeOfX/2);
 	y= 0;
 	this.pos.push([{x:x, y:y}, {x:x, y:y-1}, {x:x+1, y:y}, {x:x+1, y:y-1}]);
-	this.color.push(randomNumber(1,2));
+	this.color.push(randomNumber(1,6));
 }
 
 function lastBlock(){
